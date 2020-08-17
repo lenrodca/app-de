@@ -45,18 +45,18 @@ export default function App() {
 		time =
 			today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
 
-		latitud = Object.values(location)[0].latitude;
-		longitud = Object.values(location)[0].longitude;
-		// console.log({ latitud, longitud });
+		latitud = location.coords.latitude;
+		longitud = location.coords.longitude;
+		console.log({ latitud, longitud });
 		text = JSON.stringify(location);
-		// console.log({ text, time, date });
+		console.log({ text, time, date });
 	}
 
 	let onPress = async () => {
 		// console.log({ latitud, longitud });
 		const status = await SMS.sendSMSAsync(
 			value,
-			`Estas son sus coordenadas , ${text}. La fecha de hoy es :${date} y la hora del envio es : ${time}`
+			`Estas son sus coordenadas , Latitud : ${latitud} , Longitud : ${longitud}. La fecha de hoy es :${date} y la hora del envio es : ${time}`
 		);
 	};
 
