@@ -1,15 +1,63 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
 import * as SMS from 'expo-sms';
-import Communications from 'react-native-communications';
+import * as Location from 'expo-location';
+
+// import Communications from 'react-native-communications';
+// import Geolocalizacion from './assets/js/geolocalizacion';
+// import GetLocation from 'react-native-get-location';
 
 export default function App() {
-	const [value, onChangeText] = React.useState('');
-	console.log(value);
+	const [value, onChangeText] = useState('');
+	const [location, setLocation] = useState(null);
+	const [errorMsg, setErrorMsg] = useState(null);
 
-	onPress = async () => {
-		const status = await SMS.sendSMSAsync(value, 'Mensaje de prueba');
+	useEffect(() => {
+		(async () => {
+			let { status } = await Location.requestPermissionsAsync();
+			if (status !== 'granted') {
+				setErrorMsg('Permission to access location was denied');
+			}
+
+			let location = await Location.getCurrentPositionAsync({});
+			setLocation(location);
+		})();
+	});
+	let today;
+	let date;
+	let time;
+	let latitud = 0;
+	let longitud = 0;
+	let text = 'Waiting..';
+	// console.log(location);
+	if (errorMsg) {
+		text = errorMsg;
+	} else if (location) {
+		today = new Date();
+		date =
+			today.getFullYear() +
+			'-' +
+			(today.getMonth() + 1) +
+			'-' +
+			today.getDate();
+
+		time =
+			today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+
+		latitud = Object.values(location)[0].latitude;
+		longitud = Object.values(location)[0].longitude;
+		// console.log({ latitud, longitud });
+		text = JSON.stringify(location);
+		// console.log({ text, time, date });
+	}
+
+	let onPress = async () => {
+		// console.log({ latitud, longitud });
+		const status = await SMS.sendSMSAsync(
+			value,
+			`Estas son sus coordenadas , ${text}. La fecha de hoy es :${date} y la hora del envio es : ${time}`
+		);
 	};
 
 	// onPress = async () => {
@@ -32,7 +80,7 @@ export default function App() {
 				onChangeText={(text) => onChangeText(text)}
 				value={value}
 			/>
-			<Button title="Enviar SMS con coordenadas" onPress={this.onPress} />
+			<Button title="Enviar SMS con coordenadas" onPress={onPress} />
 			<StatusBar style="auto" />
 		</View>
 	);
