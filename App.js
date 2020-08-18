@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
-import * as SMS from 'expo-sms';
 import * as Location from 'expo-location';
-
 // import Communications from 'react-native-communications';
 // import Geolocalizacion from './assets/js/geolocalizacion';
 // import GetLocation from 'react-native-get-location';
+let twilite = require('twilite');
+global.Buffer = global.Buffer || require('buffer').Buffer;
 
 export default function App() {
 	const [value, onChangeText] = useState('');
@@ -47,17 +47,19 @@ export default function App() {
 
 		latitud = location.coords.latitude;
 		longitud = location.coords.longitude;
-		console.log({ latitud, longitud });
+		// console.log({ latitud, longitud });
 		text = JSON.stringify(location);
-		console.log({ text, time, date });
+		// console.log({ text, time, date });
 	}
 
 	let onPress = async () => {
-		// console.log({ latitud, longitud });
-		const status = await SMS.sendSMSAsync(
-			value,
-			`Estas son sus coordenadas , Latitud : ${latitud} , Longitud : ${longitud}. La fecha de hoy es :${date} y la hora del envio es : ${time}`
+		let body = `Estas son sus coordenadas , Latitud : ${latitud} , Longitud : ${longitud}. La fecha de hoy es :${date} y la hora del envio es : ${time}`;
+		let tw = twilite(
+			'AC9a964d1fb99e66239dd9e4be708e59b1',
+			'20cb96bcfc60a7feb76608ea4176deff',
+			'+16514193786'
 		);
+		await tw.sendMessageAsync({ To: value, Body: body });
 	};
 
 	// onPress = async () => {
