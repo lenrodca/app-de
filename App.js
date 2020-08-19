@@ -55,9 +55,9 @@ export default function App() {
 	let onPress = async () => {
 		let body = `Estas son sus coordenadas , Latitud : ${latitud} , Longitud : ${longitud}. La fecha de hoy es :${date} y la hora del envio es : ${time}`;
 		let tw = twilite(
-			'AC9a964d1fb99e66239dd9e4be708e59b1',
+			//api,
 			//TOKEN,
-			'+16514193786'
+			//number'
 		);
 		await tw.sendMessageAsync({ To: value, Body: body });
 	};
